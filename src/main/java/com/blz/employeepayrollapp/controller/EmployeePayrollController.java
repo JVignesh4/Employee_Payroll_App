@@ -2,43 +2,56 @@ package com.blz.employeepayrollapp.controller;
 
 
 import com.blz.employeepayrollapp.dto.EmployeePayrollDTO;
+import com.blz.employeepayrollapp.dto.ResponseDTO;
+import com.blz.employeepayrollapp.model.EmployeePayrollData;
+import com.blz.employeepayrollapp.service.IEmployeePayrollService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/employeepayrollservice")
 public class EmployeePayrollController {
 
-    //localhost:8090/employeepayrollservice/get
+    @Autowired
+    private IEmployeePayrollService employeePayrollService;
+
     @RequestMapping(value = {"", "/", "/get"})
-    public ResponseEntity<String> getEmployeePayrollData() {
-        return new ResponseEntity<String>("Get Call Success", HttpStatus.OK);
+    public ResponseEntity<ResponseDTO> getEmployeePayrollData() {
+        List<EmployeePayrollData> employeeDataList = null;
+        employeeDataList = employeePayrollService.getEmployeePayrollData();
+        ResponseDTO responseDTO = new ResponseDTO("Get Call Success", employeeDataList);
+        return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
     }
 
-    //localhost:8090/employeepayrollservice/get/1
     @GetMapping("/get/{empId}")
-    public ResponseEntity<String> getEmployeePayrollData(@PathVariable("empId") int empId) {
-        return new ResponseEntity<String>("Get Call Success for id: " + empId, HttpStatus.OK);
+    public ResponseEntity<ResponseDTO> getEmployeePayrollData(@PathVariable("empId") int empId) {
+        EmployeePayrollData employeePayrollData = employeePayrollService.getEmployeePayrollDataById(empId);
+        ResponseDTO responseDTO = new ResponseDTO("Get Call for ID Successful", employeePayrollData);
+        return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
     }
 
-    //localhost:8090/employeepayrollservice/create
     @PostMapping("/create")
-    public ResponseEntity<String> addEmployeePayrollData(@RequestBody EmployeePayrollDTO empPayrollDTO) {
-        return new ResponseEntity<String>("Created Employee Payroll Data for: " + empPayrollDTO, HttpStatus.OK);
+    public ResponseEntity<ResponseDTO> addEmployeePayrollData(@RequestBody EmployeePayrollDTO employeePayrollDTO) {
+        EmployeePayrollData employeePayrollData = employeePayrollService.createEmployeePayrollData(employeePayrollDTO);
+        ResponseDTO responseDTO = new ResponseDTO("Created Employee Payroll Data Successfully", employeePayrollData);
+        return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
     }
 
-    //localhost:8090/employeepayrollservice/update
-    @PutMapping("/update")
-    public ResponseEntity<String> updateEmployeePayrollData(@RequestBody EmployeePayrollDTO empPayrollDTO) {
-        return new ResponseEntity<String>("Updated Employee Payroll Data for: " + empPayrollDTO, HttpStatus.OK);
+    @PutMapping("/update/{empId}")
+    public ResponseEntity<ResponseDTO> updateEmployeePayrollData(@PathVariable("empId") int empId, @RequestBody EmployeePayrollDTO employeePayrollDTO) {
+        EmployeePayrollData employeePayrollData = employeePayrollService.updateEmployeePayrollData(empId, employeePayrollDTO);
+        ResponseDTO responseDTO = new ResponseDTO("Updated Employee Payroll Data Successfully", employeePayrollData);
+        return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
     }
 
-    //localhost:8090/employeepayrollservice/delete/1
     @DeleteMapping("/delete/{empId}")
-    public ResponseEntity<String> deleteEmployeePayrollData(@PathVariable("empId") int empId) {
-        return new ResponseEntity<String>("Delete Call Success for id: " + empId, HttpStatus.OK);
-
+    public ResponseEntity<ResponseDTO> deleteEmployeePayrollData(@PathVariable("empId") int empId) {
+        employeePayrollService.deleteEmployeePayrollData(empId);
+        ResponseDTO responseDTO = new ResponseDTO("Deleted Successfully", " Deleted Id: " + empId);
+        return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
     }
 }
-
