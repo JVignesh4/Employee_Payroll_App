@@ -1,5 +1,8 @@
 package com.blz.employeepayrollapp.dto;
 
+import lombok.Data;
+
+@Data
 public class EmployeePayrollDTO {
 
     public String name;
