@@ -1,9 +1,9 @@
 package com.blz.employeepayrollapp.dto;
+
 import lombok.Data;
 
 @Data
 public class ResponseDTO {
-
     private String message;
     private Object data;
 
